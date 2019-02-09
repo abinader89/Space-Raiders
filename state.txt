@@ -1,0 +1,41 @@
+// This is an outline of the game state, and should be updated if it is modified
+
+State
+-------------------------------------------------------------------------------
+{
+  players: [id: {
+              position: {
+                          x: int,
+                          y: int
+                        },
+              lives: int,
+              powerups: [{}],             <- not entirely sure how these are gonna be handled yet
+              direction: >= -1; <= 1    <- movement should be a range from -1 (left?) to 1 (right) to account for speed
+            }, ...],
+  aliens: [id: {
+            position: {
+                        x: int,
+                        y: int,
+                      },
+            health: int,
+            }, ...],
+            direction: >= -1; <= 1
+          }],
+  barriers: [id: {
+              position: {
+                          x: int,
+                          y: int,
+                        },
+              health: int,            <- traditional space invaders has barriers which deteriorate where they are hit
+              }],                         this would be more complex to add, but possible with a matrix of damage points
+  stage: int,                             reliative to the center position
+  ships: [id: {
+            position: {
+                        x: int,
+                        y: int,
+                      },
+            health: int,
+            direction: >= -1; <= 1,
+          }, ...}],
+  directionOfAliens: >= -1; <= 1,     <- Since all the aliens move in the same direction, it makes sense to store it outside of the alien objects
+}
