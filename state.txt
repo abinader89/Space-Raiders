@@ -37,5 +37,11 @@ State
             health: int,
             direction: >= -1; <= 1,
           }, ...}],
+  lasers: [{
+              position: {
+                          x: int,
+                          y: int,
+                        }
+          }, ...],
   directionOfAliens: >= -1; <= 1,     <- Since all the aliens move in the same direction, it makes sense to store it outside of the alien objects
 }
