@@ -1,0 +1,14 @@
+<script>
+ window.gameName = "<%= @name %>";
+ if(window.location.pathname == "/game") window.location.pathname = "/game/" + window.gameName;
+</script>
+
+<div class="row">
+  <div class="column">
+    <h1>Memory Game: <%= @name %></h1>
+    <div id="root">
+      React component loading...
+    </div>
+  </div>
+</div>
+

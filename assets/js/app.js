@@ -10,8 +10,17 @@ import css from "../css/app.css"
 // Import dependencies
 //
 import "phoenix_html"
+import $ from "jquery";
+import socket from "./socket"
 
 // Import local files
 //
 // Local files can be imported directly using relative paths, for example:
 // import socket from "./socket"
+import game_init from "./game"
+
+$(() => {
+  let root = $('#root')[0];
+  let channel = socket.channel("space-raiders" + window.gameName, {})
+  game_init(root, channel);
+});

@@ -3,6 +3,7 @@ defmodule SpaceRaidersWeb.UserSocket do
 
   ## Channels
   # channel "room:*", SpaceRaidersWeb.RoomChannel
+  channel "space_raiders:*", SpaceRaidersWeb.SpaceRaidersChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After
