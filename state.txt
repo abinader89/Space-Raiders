@@ -10,7 +10,7 @@ State
                         },
               lives: int,
               powerups: [{}],             <- not entirely sure how these are gonna be handled yet
-              direction: >= -1; <= 1    <- movement should be a range from -1 (left?) to 1 (right) to account for speed
+              direction: >= -1; <= 1    <- movement should be a range from -1 (left?) to 1 (right) to account for speed # abinader89: 2/16 I don't think we need this
             }, ...],
   aliens: [id: {
             position: {
