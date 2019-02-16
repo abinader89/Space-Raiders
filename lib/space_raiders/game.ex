@@ -6,7 +6,7 @@ def get_players do
   Map.put(identifier, :posn, %{x: 25 * (1 + no), y: 250})
     |> Map.put(:lives, 3)
     |> Map.put(:powerups, 0)
-    end
+  end
   end
 
 def get_aliens do
@@ -28,24 +28,24 @@ def get_aliens do
   no < 25 ->
     Map.put(identifier, :posn, %{x: 10 * (1 + (rem(no, 5))), y: 55})
     |> Map.put(:health, 2)
-    end
-   end
+  end
+  end
   end
 
 def get_barriers do
   barriers = Enum.map(0..2, &(%{id: &1}))
   Enum.map barriers, fn %{id: no} = identifier ->
   Map.put(identifier, :posn, %{x: 33 * (1 + no), y: 220})
-    |> Map.put(:health, 10)
-    end
+  |> Map.put(:health, 10)
+  end
   end
 
 def get_lasers do
   lasers = Enum.map(0..2, &(%{id: &1}))
   Enum.map lasers, fn %{id: no} = identifier ->
   Map.put(identifier, :inplay, false)
-    |> Map.put(:posn, %{x: 0, y: 0}) # these have to be calculated based on the player
-    end
+  |> Map.put(:posn, %{x: 0, y: 0}) # these have to be calculated based on the player
+  end
   end
 
 def new do
@@ -60,5 +60,5 @@ def new do
     |> Map.put(:aliens, aliens)
     |> Map.put(:barriers, barriers)
     |> Map.put(:right_shift, false)
-    end
+  end
 end
