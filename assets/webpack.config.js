@@ -13,7 +13,7 @@ module.exports = (env, options) => ({
     ]
   },
   entry: {
-      './js/app.js': ['./js/app.js'].concat(glob.sync('./vendor/**/*.js'))
+    './js/app.js': ['./js/app.js'].concat(glob.sync('./vendor/**/*.js'))
   },
   output: {
     filename: 'app.js',
@@ -34,11 +34,14 @@ module.exports = (env, options) => ({
       {
         test: /\.css$/,
         use: [MiniCssExtractPlugin.loader, 'css-loader']
-      }
-    ]
-  },
+      },
+      {
+        test: /\.(jpg|png|svg)$/,
+        loader: "file-loader?name=/images/[name].[ext]",
+       },
+    ]},
   resolve: {
-    extensions: ['.js', '.jsx', '.css'],
+    extensions: ['.js', '.jsx', '.css', '.svg', '.png'],
   },
   plugins: [
     new MiniCssExtractPlugin({ filename: '../css/app.css' }),
