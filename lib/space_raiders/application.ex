@@ -12,6 +12,8 @@ defmodule SpaceRaiders.Application do
       SpaceRaidersWeb.Endpoint
       # Starts a worker by calling: SpaceRaiders.Worker.start_link(arg)
       # {SpaceRaiders.Worker, arg},
+      SpaceRaiders.GameSup,
+      SpaceRaiders.BackupAgent,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
