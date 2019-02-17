@@ -64,7 +64,7 @@ defmodule SpaceRaiders.Game do
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
   # game: state
-  # playerID: ienteger mapping to players id field in the state
+  # playerID: integer mapping to players id field in the state
   # dir: atom :left or :right specifying the direction that the player should move
 
   # Logic for a new state
