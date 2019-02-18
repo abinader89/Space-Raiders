@@ -1,12 +1,27 @@
 defmodule SpaceRaidersWeb.SpaceRaidersChannel do
   use SpaceRaidersWeb, :channel
 
+  alias SpaceRaiders.Game
+
   def join("space_raiders" <> name , payload, socket) do
     if authorized?(payload) do
-      {:ok, socket}
+      game = Game.new()
+      socket = socket
+            |> assign(:game, game)
+            |> assign(:name, name)
+      {:ok, %{"join" => name, "game" => game}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
+  end
+
+  def handle_in("move", %{"direction" => direction, "id" => id}, socket) do
+    game = socket.assigns[:game]
+        |> Game.move(id, String.to_atom(direction))
+        |> IO.inspect
+    socket = socket
+          |> assign(:game, game)
+      {:reply, {:ok, %{"game" => game}}, socket}
   end
 
   # Channels can be used in a request/response fashion

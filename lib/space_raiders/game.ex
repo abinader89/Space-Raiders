@@ -70,7 +70,7 @@ defmodule SpaceRaiders.Game do
   # Logic for a new state
   def move(game, playerID, dir) do
 
-  delta = move_help(game, playerID, dir) + Enum.at(game[:players], playerID).posn.x
+  delta = move_help(game, playerID, dir)
   new_posn = Map.put(Enum.at(game[:players], playerID).posn, :x, delta)
 
   players = game[:players]
@@ -101,7 +101,7 @@ defmodule SpaceRaiders.Game do
     x = Enum.at(players, playerID).posn.x
     cond do
     dir == :left and x > 10 ->
-      Enum.at(players, playerID).posn.x - 5
+      Enum.at(players, playerID).posn.x - 5 
     dir == :right and x < 255 ->
       Enum.at(players, playerID).posn.x + 5
     true ->
