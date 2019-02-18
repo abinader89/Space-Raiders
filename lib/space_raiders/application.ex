@@ -9,11 +9,10 @@ defmodule SpaceRaiders.Application do
     # List all child processes to be supervised
     children = [
       # Start the endpoint when the application starts
-      SpaceRaidersWeb.Endpoint
+      SpaceRaidersWeb.Endpoint,
       # Starts a worker by calling: SpaceRaiders.Worker.start_link(arg)
       # {SpaceRaiders.Worker, arg},
       SpaceRaiders.GameSup,
-      SpaceRaiders.BackupAgent,
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html
