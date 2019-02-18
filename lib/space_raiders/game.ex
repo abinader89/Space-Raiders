@@ -3,7 +3,7 @@ defmodule SpaceRaiders.Game do
   def get_players do
   players = Enum.map(0..1, &(%{id: &1}))
   Enum.map players, fn %{id: no} = identifier ->
-  Map.put(identifier, :posn, %{x: 25 * (1 + no), y: 250})
+  Map.put(identifier, :posn, %{x: 200 * (1 + no), y: 250})
     |> Map.put(:lives, 3)
     |> Map.put(:powerups, 0)
     end
@@ -105,10 +105,10 @@ defmodule SpaceRaiders.Game do
     cond do
     dir == :left and x > 10 ->
       -5 
-    dir == :right and x < 255 ->
+    dir == :right and x < 600 ->
       5
     true ->
-    x
+      0
     end
   end
 
