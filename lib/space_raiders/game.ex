@@ -6,7 +6,7 @@ defmodule SpaceRaiders.Game do
   Map.put(identifier, :posn, %{x: 25 * (1 + no), y: 250})
     |> Map.put(:lives, 3)
     |> Map.put(:powerups, 0)
-  end
+    end
   end
 
   def get_aliens do
@@ -59,7 +59,8 @@ defmodule SpaceRaiders.Game do
       |> Map.put(:lasers, lasers)
       |> Map.put(:aliens, aliens)
       |> Map.put(:barriers, barriers)
-      |> Map.put(:right_shift, false)
+      |> Map.put(:right_shift, true)
+      |> Map.put(:counter, 1)
   end
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
@@ -68,24 +69,25 @@ defmodule SpaceRaiders.Game do
   # dir: atom :left or :right specifying the direction that the player should move
 
   # Logic for a new state
-  def move(game, playerID, dir) do
+  def move(state, playerID, dir) do
 
-  delta = move_help(game, playerID, dir) + Enum.at(game[:players], playerID).posn.x
-  new_posn = Map.put(Enum.at(game[:players], playerID).posn, :x, delta)
+  delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
+  new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
 
-  players = game[:players]
+  players = state[:players]
   updated_players = Enum.map players, fn %{id: num} = identifier ->
     if num == playerID do
         Map.put(identifier, :posn, new_posn)
     else
         identifier
-      end
+    end
     end
 
-  lasers = game[:lasers]
-  aliens = game[:aliens]
-  barriers = game[:barriers]
-  right_shift = game[:right_shift]
+  lasers = state[:lasers]
+  aliens = state[:aliens]
+  barriers = state[:barriers]
+  right_shift = state[:right_shift]
+  counter = state[:counter]
 
   state = %{}
   Map.put(state, :players, updated_players)
@@ -93,11 +95,12 @@ defmodule SpaceRaiders.Game do
     |> Map.put(:aliens, aliens)
     |> Map.put(:barriers, barriers)
     |> Map.put(:right_shift, right_shift)
+    |> Map.put(:counter, counter)
   end
 
   # Logic for calculating delta
-  def move_help(game, playerID, dir) do
-    players = game[:players]
+  def move_help(state, playerID, dir) do
+    players = state[:players]
     x = Enum.at(players, playerID).posn.x
     cond do
     dir == :left and x > 10 ->
@@ -107,5 +110,77 @@ defmodule SpaceRaiders.Game do
     true ->
     x
     end
+  end
+
+  # On-tick will be called to update the status
+  def on_tick(state) do
+    players = state[:players]
+    lasers = state[:lasers]
+    aliens = state[:aliens]
+    barriers = state[:barriers]
+    new_counter = rem(state[:counter] + 1, 100)
+    right_shift = state[:right_shift]
+
+    updated_lasers = update_lasers(lasers)
+    updated_aliens = update_aliens(aliens, new_counter, right_shift)
+    updated_right_shift = update_shift(right_shift, new_counter)
+
+    state = %{}
+    Map.put(state, :players, players)
+      |> Map.put(:lasers, updated_lasers)
+      |> Map.put(:aliens, updated_aliens)
+      |> Map.put(:barriers, barriers)
+      |> Map.put(:right_shift, updated_right_shift)
+      |> Map.put(:counter, new_counter)
+    end
+
+  # delegate to update_lasers with the lasers map in the state
+  def update_lasers(lasers) do
+    Enum.map lasers, fn %{id: no} = laser ->
+    cond do
+    laser[:inplay] and laser[:posn].y > 5 ->
+        new_y = laser[:posn].y - 5
+        Map.put(laser, :posn, %{x: laser[:posn].x, y: new_y})
+    laser[:inplay] ->
+        Map.put(laser, :inplay, false)
+    true ->
+        laser
+    end
+    end
+  end
+
+  # delegate to update_aliens with the aliens map in the state
+  def update_aliens(aliens, counter, right_shift) when counter == 0 do
+        Enum.map aliens, fn %{id: no} = alien ->
+        new_y = alien[:posn].y + 5
+        Map.put(alien, :posn, %{x: alien[:posn].x, y: new_y})
+  end
+  end
+
+  def update_aliens(aliens, descend, right_shift) when right_shift do
+        Enum.map aliens, fn %{id: no} = alien ->
+        new_x = alien[:posn].x + 5
+        Map.put(alien, :posn, %{x: new_x, y: alien[:posn].x})
+  end
+  end
+
+  def update_aliens(aliens, descend, right_shift) do
+        Enum.map aliens, fn %{id: no} = alien ->
+        new_x = alien[:posn].x - 5
+        Map.put(alien, :posn, %{x: new_x, y: alien[:posn].x})
+  end
+  end
+
+  # delegate to update_shift with the right_shift map in the state
+  def update_shift(shift, counter) when not shift and counter == 0 do
+    true
+  end
+
+  def update_shift(shift, counter) when shift and counter == 0 do
+    false
+  end
+
+  def update_shift(shift, counter) do
+    shift
   end
 end
