@@ -104,9 +104,9 @@ defmodule SpaceRaiders.Game do
     x = Enum.at(players, playerID).posn.x
     cond do
     dir == :left and x > 10 ->
-      Enum.at(players, playerID).posn.x - 5 
+      -5 
     dir == :right and x < 255 ->
-      Enum.at(players, playerID).posn.x + 5
+      5
     true ->
     x
     end
@@ -172,15 +172,11 @@ defmodule SpaceRaiders.Game do
   end
 
   # delegate to update_shift with the right_shift map in the state
-  def update_shift(shift, counter) when not shift and counter == 0 do
-    true
-  end
-
-  def update_shift(shift, counter) when shift and counter == 0 do
-    false
-  end
-
-  def update_shift(shift, _counter) do
-    shift
+  def update_shift(shift, counter) do 
+    if counter == 0 do
+      not shift
+    else
+      shift
+    end
   end
 end
