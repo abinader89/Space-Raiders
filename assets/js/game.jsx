@@ -32,29 +32,32 @@ const AlienImage = (props) => {
 }
 
 class Game extends React.Component {
- constructor(props) {
+  constructor(props) {
     const { channel } = props;
     super(props);
     this.state = {
-        aliens: [],
-        barriers: [],
-        players: [],
+      aliens: [],
+      barriers: [],
+      players: [],
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
     window.channel.join("space_raiders").receive("ok", (game) => this.setState(game.game)) 
-   //channel.on("ok", (game)=>this.setState(game))
+    //channel.on("ok", (game)=>this.setState(game))
+    window.channel.on('new_tick', msg => {
+      console.log("The timer is: ", msg)
+    })
   }
 
 
-  
+
 
   onKeyDown(e) {
     const { key } = e;
     if (key == "ArrowLeft" || key == "a") {
       window.channel.push("move", {id: 1, direction: "left"}).receive("ok", (game) => {this.setState(game.game)})
     } else if (e.key == "ArrowRight" || key == "d") {
-       window.channel.push("move", {id: 1, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
+      window.channel.push("move", {id: 1, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
     }
   }
 
