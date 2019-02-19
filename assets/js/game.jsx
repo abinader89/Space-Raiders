@@ -42,10 +42,10 @@ class Game extends React.Component {
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
-    window.channel.join("space_raiders").receive("ok", (game) => this.setState(game.game)) 
+    window.channel.join("space_raiders").receive("ok", () => {})
     //channel.on("ok", (game)=>this.setState(game))
     window.channel.on('new_tick', msg => {
-      console.log("The timer is: ", msg)
+      this.setState(msg)
     })
   }
 
@@ -64,6 +64,7 @@ class Game extends React.Component {
   renderAliens(aliens){
     const out = [];
     aliens.forEach((alien) => {
+      console.log(alien.posn.x, alien.posn.y)
       out.push(<AlienImage {...{x: (alien.posn.x * 10) + 40, y: alien.posn.y * 4}}/>);
     })
     return out;
@@ -74,7 +75,6 @@ class Game extends React.Component {
     const out = [];
     barriers.forEach((barrier) => {
       out.push(<Rect {...{
-        x: (barrier.posn.x * 6) - 30,
         y: barrier.posn.y * 3,
         height: 20,
         width: 60,
@@ -86,7 +86,6 @@ class Game extends React.Component {
   renderPlayers(players) {
     const out = [];
     players.forEach((player) => {
-      console.log(player.posn.x, 'x');
       out.push(<SpaceshipImage {...{x: (player.posn.x) + 40, y: player.posn.y * 3}}/>)});
     return out
   }

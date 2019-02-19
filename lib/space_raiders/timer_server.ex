@@ -24,7 +24,6 @@ defmodule SpaceRaiders.Timer do
   def init(state) do
     %{:game => game, :name => name} = state
     schedule_update(1_000, name)
-    broadcast(game, name)
     {:ok, state}
   end
 
@@ -44,7 +43,8 @@ defmodule SpaceRaiders.Timer do
 
 
   defp broadcast(response, name) do
-    SpaceRaidersWeb.Endpoint.broadcast!("space_raiders:" <> name, "new_tick", response)
+    "calling broadcase " <>name |> IO.inspect
+    SpaceRaidersWeb.Endpoint.broadcast!("space_raiders" <> name, "new_tick", response)
   end
 
 end

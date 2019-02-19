@@ -5,11 +5,8 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
 
   def join("space_raiders" <> name , payload, socket) do
     if authorized?(payload) do
-      game = Game.new()
-      socket = socket
-            |> assign(:game, game)
-            |> assign(:name, name)
-      {:ok, %{"join" => name, "game" => game}, socket}
+      SpaceRaiders.Timer.start(name)
+      {:ok, %{"join" => name}, socket}
     else
       {:error, %{reason: "unauthorized"}}
     end
@@ -26,6 +23,7 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
 
 
   def handle_in("new_tick", msg, socket) do
+    "sending response" |> IO.inspect
     push(socket, "new_tick", msg)
     {:noreply, socket}
   end
