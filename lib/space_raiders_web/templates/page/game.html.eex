@@ -1,5 +1,6 @@
 <script>
  window.gameName = "<%= @game %>";
+ window.userName = "<%= @user %>";
 </script>
 
 

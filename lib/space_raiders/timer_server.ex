@@ -1,24 +1,31 @@
 defmodule SpaceRaiders.Timer do
   use GenServer
 
+  alias SpaceRaiders.BackupAgent
+
   def reg(name) do
     {:via, Registry, {SpaceRaiders.GameReg, name}}
   end
 
 
-  def start(name) do
+  def start(name, user) do
+    "starting #{name} in #{user}" |> IO.inspect
     spec = %{
       id: __MODULE__,
-      start: {__MODULE__, :start_link, [name]},
+      start: {__MODULE__, :start_link, [%{name: name, user: user}]},
       restart: :permanent,
       type: :worker,
     }
     SpaceRaiders.GameSup.start_child(spec)
   end
 
-  def start_link(name) do
-    if(name !=[]) do
-      game = SpaceRaiders.Game.new()
+  def start_link(params) do
+    if(params !=[]) do
+      %{:name => name, :user => user} = params
+      game = SpaceRaiders.BackupAgent.get(name) || SpaceRaiders.Game.new(user)
+      if(SpaceRaiders.BackupAgent.get(name) != nil) do
+        join(name, user)
+      end
       GenServer.start_link(__MODULE__, %{:game => game, :name => name}, name: reg(name))
     else
       GenServer.start_link(__MODULE__, %{})
@@ -29,8 +36,19 @@ defmodule SpaceRaiders.Timer do
      GenServer.call(reg(name), {:move, name, direction})
   end
 
+  def join(name, user) do
+    GenServer.call(reg(name), {:join, name, user})
+  end
+
+  def handle_call({:join, name, user}, _from, game) do
+    game = SpaceRaiders.Game.add_player(game, user)
+    BackupAgent.put(name, game)
+    {:reply, game, game}
+  end
+
   def handle_call({:move, name, direction}, _from, game) do
-    game = SpaceRaiders.Game.move(game,1,  direction)
+    game = SpaceRaiders.Game.move(game,0,  direction)
+    BackupAgent.put(name, game)
     {:reply, game, game}
   end
 
@@ -48,6 +66,7 @@ defmodule SpaceRaiders.Timer do
       true -> SpaceRaiders.Game.on_tick(state)
     end
     broadcast(game, name)
+    BackupAgent.put(name, game)
     schedule_update(100, name)
     {:noreply, game}
   end

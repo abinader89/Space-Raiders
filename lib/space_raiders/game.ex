@@ -1,12 +1,20 @@
 defmodule SpaceRaiders.Game do
 
-  def get_players do
-  players = Enum.map(0..1, &(%{id: &1}))
-  Enum.map players, fn %{id: no} = identifier ->
-  Map.put(identifier, :posn, %{x: 200 * (1 + no), y: 250})
-    |> Map.put(:lives, 3)
-    |> Map.put(:powerups, 0)
-    end
+  def get_player(name, id) do
+    player = %{id: id, name: name}
+    Map.put(player, :posn, %{x: 200 * (1 + id), y: 250})
+      |> Map.put(:lives, 3)
+      |> Map.put(:powerups, 0)
+  end
+
+  def add_player(game, name) do
+    id = game[:players]
+            |> Enum.reduce(0, fn player, acc -> if player[:id] >= acc do
+                                                       player[:id] + 1
+                                                 end end)
+    player = get_player(name, id)
+    newPlayers = [player | game[:players]]
+    Map.put(game, :players, newPlayers)
   end
 
   def get_aliens do
@@ -48,9 +56,9 @@ defmodule SpaceRaiders.Game do
     end
   end
 
-  def new do
+  def new(user) do
     state = %{}
-    players = get_players()
+    players = [get_player(user, 0)]
     lasers = get_lasers()
     aliens = get_aliens()
     barriers = get_barriers()

@@ -22,6 +22,6 @@ import game_init from "./game"
 $(() => {
   console.log("init")
   let root = $('#root')[0];
-  let channel = socket.channel("space_raiders:" + window.gameName, {})
+  let channel = socket.channel("space_raiders:" + window.gameName, {user: window.userName})
   game_init(root, channel);
 });

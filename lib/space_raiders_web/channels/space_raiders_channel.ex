@@ -5,8 +5,10 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
 
   def join("space_raiders" <> name , payload, socket) do
     if authorized?(payload) do
-      SpaceRaiders.Timer.start(name)
-      socket = assign(socket, :name, name)
+      %{"user" => user} = payload
+      "#{user} joined #{name}" |> IO.inspect
+        SpaceRaiders.Timer.start(name, user)
+        socket = assign(socket, :name, name)
       {:ok, %{"join" => name}, socket}
     else
       {:error, %{reason: "unauthorized"}}
