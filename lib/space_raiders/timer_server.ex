@@ -17,13 +17,28 @@ defmodule SpaceRaiders.Timer do
   end
 
   def start_link(name) do
-    game = SpaceRaiders.Game.new()
-    GenServer.start_link(__MODULE__, %{:game => game, :name => name}, name: reg(name))
+    if(name !=[]) do
+      game = SpaceRaiders.Game.new()
+      GenServer.start_link(__MODULE__, %{:game => game, :name => name}, name: reg(name))
+    else
+      GenServer.start_link(__MODULE__, %{})
+    end
+  end
+
+  def move(name, direction) do
+     GenServer.call(reg(name), {:move, name, direction})
+  end
+
+  def handle_call({:move, name, direction}, _from, game) do
+    game = SpaceRaiders.Game.move(game,1,  direction)
+    {:reply, game, game}
   end
 
   def init(state) do
-    %{:game => game, :name => name} = state
-    schedule_update(1_000, name)
+    if (state != %{}) do
+      %{:game => game, :name => name} = state
+      schedule_update(1_000, name)
+     end
     {:ok, state}
   end
 

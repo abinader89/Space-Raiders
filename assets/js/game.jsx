@@ -55,7 +55,7 @@ class Game extends React.Component {
   onKeyDown(e) {
     const { key } = e;
     if (key == "ArrowLeft" || key == "a") {
-      window.channel.push("move", {id: 1, direction: "left"}).receive("ok", (game) => {this.setState(game.game)})
+      window.channel.push("move", {id: 1, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
       window.channel.push("move", {id: 1, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
     }
