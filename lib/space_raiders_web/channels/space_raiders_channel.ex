@@ -16,7 +16,7 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
   end
 
   def handle_in("move", %{"direction" => direction, "id" => id}, socket) do
-      game = SpaceRaiders.Timer.move(socket.assigns[:name], String.to_atom(direction))
+      game = SpaceRaiders.Timer.move(socket.assigns[:name], String.to_atom(direction), id)
       {:reply, {:ok, %{"game" => game}}, socket}
   end
 

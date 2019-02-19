@@ -46,6 +46,9 @@ class Game extends React.Component {
     //channel.on("ok", (game)=>this.setState(game))
     window.channel.on('new_tick', msg => {
       this.setState(msg)
+      const { players } = msg
+      console.log(players)
+      players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
   }
 
@@ -54,10 +57,11 @@ class Game extends React.Component {
 
   onKeyDown(e) {
     const { key } = e;
+    console.log(window.id)
     if (key == "ArrowLeft" || key == "a") {
-      window.channel.push("move", {id: 1, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
+      window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
-      window.channel.push("move", {id: 1, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
+      window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
     }
   }
 

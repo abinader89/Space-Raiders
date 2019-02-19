@@ -32,8 +32,8 @@ defmodule SpaceRaiders.Timer do
     end
   end
 
-  def move(name, direction) do
-     GenServer.call(reg(name), {:move, name, direction})
+  def move(name, direction, id) do
+     GenServer.call(reg(name), {:move, name, direction, id})
   end
 
   def join(name, user) do
@@ -46,8 +46,8 @@ defmodule SpaceRaiders.Timer do
     {:reply, game, game}
   end
 
-  def handle_call({:move, name, direction}, _from, game) do
-    game = SpaceRaiders.Game.move(game,0,  direction)
+  def handle_call({:move, name, direction, id}, _from, game) do
+    game = SpaceRaiders.Game.move(game, id,  direction)
     BackupAgent.put(name, game)
     {:reply, game, game}
   end

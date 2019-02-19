@@ -13,7 +13,7 @@ defmodule SpaceRaiders.Game do
                                                        player[:id] + 1
                                                  end end)
     player = get_player(name, id)
-    newPlayers = [player | game[:players]]
+    newPlayers =  game[:players] ++ [player]
     Map.put(game, :players, newPlayers)
   end
 
@@ -77,33 +77,20 @@ defmodule SpaceRaiders.Game do
   # dir: atom :left or :right specifying the direction that the player should move
 
   # Logic for a new state
-  def move(state, playerID, dir) do
+  def move(state, playerID, dir) do  
+    delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
+    Enum.at(state[:players], playerID).posn.x|> IO.inspect
+    new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
 
-  delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
-  new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
-
-  players = state[:players]
-  updated_players = Enum.map players, fn %{id: num} = identifier ->
-    if num == playerID do
-        Map.put(identifier, :posn, new_posn)
-    else
-        identifier
-    end
-    end
-
-  lasers = state[:lasers]
-  aliens = state[:aliens]
-  barriers = state[:barriers]
-  right_shift = state[:right_shift]
-  counter = state[:counter]
-
-  state = %{}
-  Map.put(state, :players, updated_players)
-    |> Map.put(:lasers, lasers)
-    |> Map.put(:aliens, aliens)
-    |> Map.put(:barriers, barriers)
-    |> Map.put(:right_shift, right_shift)
-    |> Map.put(:counter, counter)
+    players = state[:players]
+    updated_players = Enum.map players, fn %{id: num} = identifier ->
+                                                if num == playerID do
+                                                    Map.put(identifier, :posn, new_posn)
+                                                else
+                                                   identifier
+                                                end
+                                         end
+    Map.put(state, :players, updated_players)
   end
 
   # Logic for calculating delta
@@ -112,7 +99,7 @@ defmodule SpaceRaiders.Game do
     x = Enum.at(players, playerID).posn.x
     cond do
     dir == :left and x > 10 ->
-      -5 
+      -5
     dir == :right and x < 600 ->
       5
     true ->
