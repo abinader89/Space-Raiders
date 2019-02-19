@@ -1,12 +1,15 @@
 <script>
- window.gameName = "<%= @name %>";
- if(window.location.pathname == "/game") window.location.pathname = "/game/" + window.gameName;
+ window.gameName = "<%= @game %>";
 </script>
 
+
+<div class="row">
+  <div class="column"><h1>Lobby: <%= @game %></h1></div>
+  <div class="column"><h1>User: <%= @user %></h1></div>
+</div>
 <div class="row">
   <div class="column">
-    <h1>Lobby: <%= @name %></h1>
-    <div id="root">
+        <div id="root">
       React component loading...
     </div>
   </div>

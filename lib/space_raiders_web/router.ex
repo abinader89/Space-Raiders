@@ -19,6 +19,7 @@ defmodule SpaceRaidersWeb.Router do
     get "/", PageController, :index
     post "/game", PageController, :game
     get "/game/:name", PageController, :game
+    post "/join", PageController, :join
   end
   # Other scopes may use custom stacks.
   # scope "/api", SpaceRaidersWeb do
