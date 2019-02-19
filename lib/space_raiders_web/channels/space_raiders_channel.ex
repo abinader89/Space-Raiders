@@ -15,13 +15,11 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
 
   def handle_in("move", %{"direction" => direction, "id" => id}, socket) do
       game = SpaceRaiders.Timer.move(socket.assigns[:name], String.to_atom(direction))
-        |> IO.inspect
       {:reply, {:ok, %{"game" => game}}, socket}
   end
 
 
   def handle_in("new_tick", msg, socket) do
-    "sending response" |> IO.inspect
     push(socket, "new_tick", msg)
     {:noreply, socket}
   end

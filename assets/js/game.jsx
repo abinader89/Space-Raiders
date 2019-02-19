@@ -64,9 +64,9 @@ class Game extends React.Component {
   renderAliens(aliens){
     const out = [];
     aliens.forEach((alien) => {
-      console.log(alien.posn.x, alien.posn.y)
-      out.push(<AlienImage {...{x: (alien.posn.x * 10) + 40, y: alien.posn.y * 4}}/>);
+      out.push(<AlienImage {...{x: (alien.posn.x *1.5), y: alien.posn.y * 4}}/>);
     })
+    console.log(aliens[aliens.length])
     return out;
   }
 
@@ -86,7 +86,7 @@ class Game extends React.Component {
   renderPlayers(players) {
     const out = [];
     players.forEach((player) => {
-      out.push(<SpaceshipImage {...{x: (player.posn.x) + 40, y: player.posn.y * 3}}/>)});
+      out.push(<SpaceshipImage {...{x: (player.posn.x*1.5) - 20, y: player.posn.y * 3}}/>)});
     return out
   }
 
@@ -96,7 +96,7 @@ class Game extends React.Component {
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     return <div tabIndex="0" onKeyDown={(e) => {console.log(e); this.onKeyDown(e)}}>
-      <Stage width={750} height={1000}>
+      <Stage width={900} height={1000}>
         <Layer>
           {playerComponents}
           {alienComponents}
