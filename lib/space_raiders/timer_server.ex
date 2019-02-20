@@ -23,7 +23,12 @@ defmodule SpaceRaiders.Timer do
       %{:name => name, :user => user} = params
       game = SpaceRaiders.BackupAgent.get(name) || SpaceRaiders.Game.new(user)
       if(SpaceRaiders.BackupAgent.get(name) != nil) do
-        join(name, user)
+        if(Registry.lookup(SpaceRaiders.GameReg, name) != []) do
+          join(name, user)
+        else
+          game = SpaceRaiders.Game.add_player(game, user)
+          GenServer.start_link(__MODULE__, %{:game => game, :name => name}, name: reg(name))
+        end
       end
       GenServer.start_link(__MODULE__, %{:game => game, :name => name}, name: reg(name))
     else
@@ -47,14 +52,14 @@ defmodule SpaceRaiders.Timer do
     GenServer.call(reg(name), {:join, name, user})
   end
 
-  def stop(pid) do
-    Process.exit(pid, :normal)
-  end
-
   def handle_call({:disconnect, name, id}, _from, game) do
     {game, iAmDead} = SpaceRaiders.Game.disconnect(game, id)
     BackupAgent.put(name, game)
-    {:reply, {game, iAmDead, self()}, game}
+    if(iAmDead) do
+      {:stop, :normal, game}
+    else
+      {:reply, {game, iAmDead, self()}, game}
+    end
   end
 
   def handle_call({:join, name, user}, _from, game) do
@@ -84,7 +89,6 @@ defmodule SpaceRaiders.Timer do
   end
 
   def handle_info("tick:"<> name, state) do
-  self() |> IO.inspect
    game = cond do
       state[:game] != nil -> game = SpaceRaiders.Game.on_tick(state[:game])
       true -> SpaceRaiders.Game.on_tick(state)
