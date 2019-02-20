@@ -9,12 +9,18 @@ defmodule SpaceRaiders.Game do
 
   def add_player(game, name) do
     id = game[:players]
-            |> Enum.reduce(0, fn player, acc -> if player[:id] >= acc do
-                                                       player[:id] + 1
+            |> Enum.reduce(0, fn player, acc ->   cond do
+                                                    player[:name] == name -> -1
+                                                    player[:id] >= acc && acc != -1 -> player[:id] + 1
+                                                    true -> acc
                                                  end end)
-    player = get_player(name, id)
-    newPlayers =  game[:players] ++ [player]
-    Map.put(game, :players, newPlayers)
+    cond do
+      id == -1 -> game
+      true ->
+       player = get_player(name, id)
+       newPlayers =  game[:players] ++ [player]
+       Map.put(game, :players, newPlayers)
+    end
   end
 
   def get_aliens do

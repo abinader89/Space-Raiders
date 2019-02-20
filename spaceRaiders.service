@@ -1,0 +1,16 @@
+[Unit]
+Description=Space Raiders Game
+
+[Service]
+Type=simple
+User=spaceraiders
+Group=spaceRaiders
+Restart=on-failure
+Environment=MIX_ENV=prod "PORT=4792"
+Environment=LANG=en_US.UTF-8
+
+WorkingDirectory=/home/spaceraiders/Space-Raiders
+ExecStart=/home/spaceraiders/Space-Raiders/start.sh
+
+[Install]
+WantedBy=multi-user.target
