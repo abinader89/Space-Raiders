@@ -50,6 +50,7 @@ class Game extends React.Component {
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
+    document.addEventListener("keydown", (event) => this.onKeyDown(event))
   }
 
 
@@ -67,8 +68,7 @@ class Game extends React.Component {
 
   onKeyDown(e) {
     const { key } = e;
-    if (key == "Space" || key == "e"){
-          console.log("firing")
+    if (key == "e"){
           window.channel.push("fire", {id: window.id}).receive("ok", (game) => {this.setState(game.game);})
     } else if (key == "ArrowLeft" || key == "a") {
           window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
@@ -91,6 +91,7 @@ class Game extends React.Component {
     barriers.forEach((barrier) => {
       out.push(<Rect {...{
         y: barrier.posn.y * 3,
+        x: (barrier.posn.x * 7) - 30,
         height: 20,
         width: 60,
         fill: 'black'}}/>)
@@ -111,7 +112,7 @@ class Game extends React.Component {
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     const laserComponents = this.renderPlayerLasers(lasers);
-    return <div tabIndex="0" onKeyDown={(e) => {this.onKeyDown(e)}}>
+    return <div tabIndex="0">
       <Stage width={900} height={1000}>
         <Layer>
           {playerComponents}
