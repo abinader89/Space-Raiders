@@ -193,4 +193,20 @@ defmodule SpaceRaiders.Game do
       shift
     end
   end
+
+
+  def disconnect(game, id) do
+    %{players: players} = game
+    id |> IO.inspect
+    updatedPlayers = players
+          |> Enum.reduce([], fn player, acc -> cond do
+                                                (player[:id] != id) -> [player | acc]
+                                                true -> acc
+                                                end
+                                              end)
+          |> IO.inspect
+    game = game
+          |> Map.put(:players, updatedPlayers)
+  end
+
 end

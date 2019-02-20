@@ -51,6 +51,7 @@ class Game extends React.Component {
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
     document.addEventListener("keydown", (event) => this.onKeyDown(event))
+    window.onunload = () => window.channel.push("disconnect", {id: window.id})
   }
 
 

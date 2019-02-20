@@ -23,6 +23,11 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
       game = SpaceRaiders.Timer.fire(socket.assigns[:name], id)
       {:reply, {:ok, %{"game" => game}}, socket}
   end
+  def handle_in("disconnect", %{"id" => id}, socket) do
+    game = SpaceRaiders.Timer.disconnect(socket.assigns[:name], id)
+    {:reply, {:ok, %{"game" => game}}, socket}
+  end
+
 
   def handle_in("new_tick", msg, socket) do
     push(socket, "new_tick", msg)
