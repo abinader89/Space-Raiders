@@ -69,7 +69,7 @@ defmodule SpaceRaiders.Game do
       |> Map.put(:barriers, barriers)
       |> Map.put(:right_shift, true)
       |> Map.put(:counter, 1)
-      |> Map.put(:alien_lasers, [nil])
+      |> Map.put(:alien_lasers, [])
   end
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
@@ -139,7 +139,7 @@ defmodule SpaceRaiders.Game do
     right_shift = state[:right_shift]
 
     updated_lasers = update_lasers(lasers)
-    updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter)
+    updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter) |> update_alien_lasers
     updated_aliens = update_aliens(aliens, new_counter, right_shift)
     updated_right_shift = update_shift(right_shift, new_counter)
 
@@ -168,7 +168,8 @@ defmodule SpaceRaiders.Game do
     end
   end
 
-  # delegate to update_aliens_lasers with the aliens_lasers map in the state
+  # delegate to update_alien_lasers with the aliens_lasers map in the state
+  # logic for spawning lasers
   def update_alien_lasers(alien_lasers, aliens, counter) do
     if (rem(counter, 33) == 0) do
         upper_bound = length(aliens) - 1
@@ -176,8 +177,23 @@ defmodule SpaceRaiders.Game do
         combatant = Enum.at(aliens, combatantID)
         lasers_posn = combatant[:posn]
         _aliens_lasers = [ lasers_posn | alien_lasers ]
+        else
+        alien_lasers
     end
   end
+
+  # logic for updating the lasers
+  def update_alien_lasers(alien_lasers) when length(alien_lasers) > 0 do
+    head = hd(alien_lasers)
+    if head do
+        Enum.filter(alien_lasers, fn posn -> posn[:y] < 255 end)
+        |> Enum.map(fn posn -> Map.put(posn, :y, posn[:y] + 5) end)
+    end
+    end
+
+    def update_alien_lasers(_empty) do
+    []
+    end
 
   # delegate to update_aliens with the aliens map in the state
   def update_aliens(aliens, counter, _right_shift) when counter == 0 do
