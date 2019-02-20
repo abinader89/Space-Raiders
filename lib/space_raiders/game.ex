@@ -79,7 +79,6 @@ defmodule SpaceRaiders.Game do
   # Logic for a new state
   def move(state, playerID, dir) do  
     delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
-    Enum.at(state[:players], playerID).posn.x|> IO.inspect
     new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
 
     players = state[:players]

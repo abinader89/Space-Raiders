@@ -9,7 +9,6 @@ defmodule SpaceRaiders.Timer do
 
 
   def start(name, user) do
-    "starting #{name} in #{user}" |> IO.inspect
     spec = %{
       id: __MODULE__,
       start: {__MODULE__, :start_link, [%{name: name, user: user}]},
