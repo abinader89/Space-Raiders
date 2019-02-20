@@ -48,10 +48,10 @@ class Game extends React.Component {
     window.channel.on('new_tick', msg => {
       this.setState(msg)
       const { players } = msg
-      console.log(players)
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
   }
+
 
 
   renderPlayerLasers(lasers) {
@@ -59,18 +59,19 @@ class Game extends React.Component {
     const points = [0, 0, 0, 20]
     lasers.forEach((laser) => {
       if(laser.inplay) {
-        out.push(<Line {...{x: laser.posn.x, y: laser.posn.y, points, stroke: "blue"}}/>)
+        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 3, points, stroke: "blue"}}/>)
       }
     })
-    console.log(out)
     return out;
   }
 
   onKeyDown(e) {
     const { key } = e;
-    console.log(window.id)
-    if (key == "ArrowLeft" || key == "a") {
-            window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
+    if (key == "Space" || key == "e"){
+          console.log("firing")
+          window.channel.push("fire", {id: window.id}).receive("ok", (game) => {this.setState(game.game);})
+    } else if (key == "ArrowLeft" || key == "a") {
+          window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
           window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
     }
@@ -81,7 +82,6 @@ class Game extends React.Component {
     aliens.forEach((alien) => {
       out.push(<AlienImage {...{x: (alien.posn.x *1.5), y: alien.posn.y * 4}}/>);
     })
-    console.log(aliens[aliens.length])
     return out;
   }
 
@@ -111,7 +111,7 @@ class Game extends React.Component {
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     const laserComponents = this.renderPlayerLasers(lasers);
-    return <div tabIndex="0" onKeyDown={(e) => {console.log(e); this.onKeyDown(e)}}>
+    return <div tabIndex="0" onKeyDown={(e) => {this.onKeyDown(e)}}>
       <Stage width={900} height={1000}>
         <Layer>
           {playerComponents}

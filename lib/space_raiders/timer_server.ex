@@ -36,12 +36,22 @@ defmodule SpaceRaiders.Timer do
      GenServer.call(reg(name), {:move, name, direction, id})
   end
 
+  def fire(name, id) do
+    GenServer.call(reg(name), {:fire, name, id})
+  end
+
   def join(name, user) do
     GenServer.call(reg(name), {:join, name, user})
   end
 
   def handle_call({:join, name, user}, _from, game) do
     game = SpaceRaiders.Game.add_player(game, user)
+    BackupAgent.put(name, game)
+    {:reply, game, game}
+  end
+
+  def handle_call({:fire, name, id}, _from, game) do
+    game = SpaceRaiders.Game.fire(game, id);
     BackupAgent.put(name, game)
     {:reply, game, game}
   end
