@@ -12,7 +12,7 @@ defmodule SpaceRaiders.Timer do
     spec = %{
       id: __MODULE__,
       start: {__MODULE__, :start_link, [%{name: name, user: user}]},
-      restart: :permanent,
+      restart: :transient,
       type: :worker,
     }
     SpaceRaiders.GameSup.start_child(spec)
@@ -47,10 +47,14 @@ defmodule SpaceRaiders.Timer do
     GenServer.call(reg(name), {:join, name, user})
   end
 
+  def stop(pid) do
+    Process.exit(pid, :normal)
+  end
+
   def handle_call({:disconnect, name, id}, _from, game) do
-    game = SpaceRaiders.Game.disconnect(game, id)
+    {game, iAmDead} = SpaceRaiders.Game.disconnect(game, id)
     BackupAgent.put(name, game)
-    {:reply, game, game}
+    {:reply, {game, iAmDead, self()}, game}
   end
 
   def handle_call({:join, name, user}, _from, game) do
@@ -80,6 +84,7 @@ defmodule SpaceRaiders.Timer do
   end
 
   def handle_info("tick:"<> name, state) do
+  self() |> IO.inspect
    game = cond do
       state[:game] != nil -> game = SpaceRaiders.Game.on_tick(state[:game])
       true -> SpaceRaiders.Game.on_tick(state)
