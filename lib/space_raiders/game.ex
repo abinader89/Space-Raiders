@@ -69,7 +69,7 @@ defmodule SpaceRaiders.Game do
       |> Map.put(:barriers, barriers)
       |> Map.put(:right_shift, true)
       |> Map.put(:counter, 1)
-      |> Map.put(:alien_lasers, [])
+      |> Map.put(:alien_lasers, [nil])
   end
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
@@ -132,21 +132,21 @@ defmodule SpaceRaiders.Game do
   def on_tick(state) do
     players = state[:players]
     lasers = state[:lasers]
-    aliens_lasers = state[:aliens_lasers]
+    alien_lasers = state[:alien_lasers]
     aliens = state[:aliens]
     barriers = state[:barriers]
     new_counter = rem(state[:counter] + 1, 100)
     right_shift = state[:right_shift]
 
     updated_lasers = update_lasers(lasers)
-    updated_aliens_lasers = update_aliens_lasers(aliens_lasers, aliens, new_counter)
+    updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter)
     updated_aliens = update_aliens(aliens, new_counter, right_shift)
     updated_right_shift = update_shift(right_shift, new_counter)
 
     state = %{}
     Map.put(state, :players, players)
       |> Map.put(:lasers, updated_lasers)
-      |> Map.put(:aliens_lasers, updated_aliens_lasers)
+      |> Map.put(:alien_lasers, updated_alien_lasers)
       |> Map.put(:aliens, updated_aliens)
       |> Map.put(:barriers, barriers)
       |> Map.put(:right_shift, updated_right_shift)
@@ -169,13 +169,13 @@ defmodule SpaceRaiders.Game do
   end
 
   # delegate to update_aliens_lasers with the aliens_lasers map in the state
-  def update_aliens_lasers(aliens_lasers, aliens, counter) do
+  def update_alien_lasers(alien_lasers, aliens, counter) do
     if (rem(counter, 33) == 0) do
         upper_bound = length(aliens) - 1
         combatantID = Enum.random(0..upper_bound)
         combatant = Enum.at(aliens, combatantID)
         lasers_posn = combatant[:posn]
-        aliens_lasers = [ lasers_posn | aliens_lasers ]
+        _aliens_lasers = [ lasers_posn | alien_lasers ]
     end
   end
 
