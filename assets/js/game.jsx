@@ -40,6 +40,7 @@ class Game extends React.Component {
       barriers: [],
       lasers: [],
       players: [],
+      alien_lasers: []
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
@@ -58,11 +59,20 @@ class Game extends React.Component {
 
   renderPlayerLasers(lasers) {
     const out = [];
-    const points = [0, 0, 0, 20]
+    const points = [0, 0, 0, -20]
     lasers.forEach((laser) => {
       if(laser.inplay) {
-        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 3, points, stroke: "blue"}}/>)
+        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 3, points, stroke: "black"}}/>)
       }
+    })
+    return out;
+  }
+
+  renderAlienLasers(lasers){
+    const out = [];
+    const points = [0,0, 0,20]
+    lasers.forEach((laser) => {
+       out.push(<Line {...{x: (laser.x * 1.5), y: laser.y * 3, points, stroke: "red"}}/>)
     })
     return out;
   }
@@ -108,11 +118,13 @@ class Game extends React.Component {
   }
 
   render() {
-    const { players, aliens, barriers, lasers} = this.state;
+    const { players, aliens, barriers, lasers, alien_lasers} = this.state;
     const alienComponents = this.renderAliens(aliens);
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     const laserComponents = this.renderPlayerLasers(lasers);
+    console.log(alien_lasers)
+    const alienLaserComponents = this.renderAlienLasers(alien_lasers);
     return <div tabIndex="0">
       <Stage width={900} height={1000}>
         <Layer>
@@ -120,6 +132,7 @@ class Game extends React.Component {
           {alienComponents}
           {barrierComponents}
           {laserComponents}
+          {alienLaserComponents}
         </Layer>
       </Stage>
     </div>
