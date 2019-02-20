@@ -107,6 +107,26 @@ defmodule SpaceRaiders.Game do
     end
   end
 
+  def fire(state, playerID) do
+  laser = Enum.at(state[:lasers], playerID)
+  if not laser.inplay do
+      player_x = Enum.at(state[:players], playerID)[:posn].x
+      new_posn = %{x: player_x, y: 250}
+      lasers = state[:lasers]
+      fired_lasers = Enum.map lasers, fn %{id: num} = identifier ->
+      if num == playerID do
+          Map.put(identifier, :posn, new_posn)
+          |> Map.put(:inplay, true)
+      else
+          identifier
+      end
+      end
+      Map.put(state, :lasers, fired_lasers)
+  else
+      state
+  end
+  end
+
   # on_tick will be called to update the state
   def on_tick(state) do
     players = state[:players]
@@ -152,14 +172,14 @@ defmodule SpaceRaiders.Game do
   end
   end
 
-  def update_aliens(aliens, _descend, right_shift) when right_shift do
+  def update_aliens(aliens, _counter, right_shift) when right_shift do
         Enum.map aliens, fn %{id: _no} = alien ->
         new_x = alien[:posn].x + 5
         Map.put(alien, :posn, %{x: new_x, y: alien[:posn].y})
   end
   end
 
-  def update_aliens(aliens, _descend, _right_shift) do
+  def update_aliens(aliens, _counter, _right_shift) do
         Enum.map aliens, fn %{id: _no} = alien ->
         new_x = alien[:posn].x - 5
         Map.put(alien, :posn, %{x: new_x, y: alien[:posn].y})
