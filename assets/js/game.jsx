@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Stage, Layer, Image, Container, Rect } from 'react-konva';
+import { Stage, Layer, Image, Container, Rect, Line } from 'react-konva';
 import useImage from 'use-image';
 import spaceShipImg from '../static/images/spaceship.svg';
 import alienImage from '../static/images/enemy1.svg';
@@ -38,6 +38,7 @@ class Game extends React.Component {
     this.state = {
       aliens: [],
       barriers: [],
+      lasers: [],
       players: [],
     };
     window.channel = channel
@@ -53,15 +54,25 @@ class Game extends React.Component {
   }
 
 
-
+  renderPlayerLasers(lasers) {
+    const out = [];
+    const points = [0, 0, 0, 20]
+    lasers.forEach((laser) => {
+      if(laser.inplay) {
+        out.push(<Line {...{x: laser.posn.x, y: laser.posn.y, points, stroke: "blue"}}/>)
+      }
+    })
+    console.log(out)
+    return out;
+  }
 
   onKeyDown(e) {
     const { key } = e;
     console.log(window.id)
     if (key == "ArrowLeft" || key == "a") {
-      window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
+            window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
-      window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
+          window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
     }
   }
 
@@ -95,16 +106,18 @@ class Game extends React.Component {
   }
 
   render() {
-    const { players, aliens, barriers} = this.state;
+    const { players, aliens, barriers, lasers} = this.state;
     const alienComponents = this.renderAliens(aliens);
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
+    const laserComponents = this.renderPlayerLasers(lasers);
     return <div tabIndex="0" onKeyDown={(e) => {console.log(e); this.onKeyDown(e)}}>
       <Stage width={900} height={1000}>
         <Layer>
           {playerComponents}
           {alienComponents}
           {barrierComponents}
+          {laserComponents}
         </Layer>
       </Stage>
     </div>
