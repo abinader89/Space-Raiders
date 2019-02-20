@@ -44,14 +44,17 @@ class Game extends React.Component {
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
-    window.channel.join("space_raiders").receive("ok", () => {})
     //channel.on("ok", (game)=>this.setState(game))
+    document.addEventListener("keydown", (event) => this.onKeyDown(event))
+  }
+
+  componentDidMount(){
+    window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
     window.channel.on('new_tick', msg => {
       this.setState(msg)
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
-    document.addEventListener("keydown", (event) => this.onKeyDown(event))
     window.onunload = () => window.channel.push("disconnect", {id: window.id})
   }
 

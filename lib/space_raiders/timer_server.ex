@@ -58,7 +58,7 @@ defmodule SpaceRaiders.Timer do
     if(iAmDead) do
       {:stop, :normal, game}
     else
-      {:reply, {game, iAmDead, self()}, game}
+      {:reply, game, game}
     end
   end
 
