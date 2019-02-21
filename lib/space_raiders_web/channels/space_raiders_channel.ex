@@ -24,10 +24,7 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
       {:reply, {:ok, %{"game" => game}}, socket}
   end
   def handle_in("disconnect", %{"id" => id}, socket) do
-   {game, isHeDead, pid} = SpaceRaiders.Timer.disconnect(socket.assigns[:name], id)
-   if isHeDead == true do
-      SpaceRaiders.Timer.stop(pid)
-    end
+   game = SpaceRaiders.Timer.disconnect(socket.assigns[:name], id)
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
