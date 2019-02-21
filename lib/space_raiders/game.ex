@@ -19,7 +19,23 @@ defmodule SpaceRaiders.Game do
       true ->
        player = get_player(name, id)
        newPlayers =  game[:players] ++ [player]
-       Map.put(game, :players, newPlayers)
+       game = Map.put(game, :players, newPlayers)
+       Map.put(game, :lasers, add_laser(game[:lasers], id))
+    end
+  end
+  def add_laser(lasers, id) do
+    exists = Enum.reduce(lasers,
+                          false,
+                          fn laser, acc ->
+                              cond do
+                                acc != false -> acc
+                                laser[:id] == id -> true
+                                true -> acc
+                              end
+                          end)
+    cond do
+      !exists -> lasers ++ [get_laser(id)]
+      true -> lasers
     end
   end
 
@@ -54,12 +70,8 @@ defmodule SpaceRaiders.Game do
     end
   end
 
-  def get_lasers do
-    lasers = Enum.map(0..1, &(%{id: &1}))
-    Enum.map lasers, fn %{id: _no} = identifier ->
-    Map.put(identifier, :inplay, false)
-    |> Map.put(:posn, %{x: 0, y: 0}) # these have to be calculated based on the player
-    end
+  def get_laser(id) do
+    lasers = %{:id => id, :inplay => false, :posn => %{x: 0, y: 0}}
   end
 
   def get_player_by_id(players, playerId) do
@@ -70,7 +82,7 @@ defmodule SpaceRaiders.Game do
   def new(user) do
     state = %{}
     players = [get_player(user, 0)]
-    lasers = get_lasers()
+    lasers = [get_laser(0)]
     aliens = get_aliens()
     barriers = get_barriers()
 
@@ -150,7 +162,6 @@ defmodule SpaceRaiders.Game do
     new_counter = rem(state[:counter] + 1, 100)
     right_shift = state[:right_shift]
 
-
     updated_lasers = update_lasers(lasers)
     updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter) |> update_alien_lasers
     updated_aliens = update_aliens(aliens, new_counter, right_shift)
@@ -170,17 +181,17 @@ defmodule SpaceRaiders.Game do
 
   # delegate to update_lasers with the lasers map in the state
   def update_lasers(lasers) do
-    Enum.map lasers, fn %{id: _no} = laser ->
-    cond do
-    laser[:inplay] and laser[:posn].y > 5 ->
+    Enum.map(lasers, fn laser ->
+      cond do
+       laser[:inplay] and laser[:posn].y > 5 ->
         new_y = laser[:posn].y - 5
         Map.put(laser, :posn, %{x: laser[:posn].x, y: new_y})
-    laser[:inplay] ->
+       laser[:inplay] ->
         Map.put(laser, :inplay, false)
-    true ->
+       true ->
         laser
-    end
-    end
+     end
+   end)
   end
 
   def is_game_over(state) do
@@ -310,8 +321,16 @@ defmodule SpaceRaiders.Game do
                                                true -> acc
                                              end
                                            end)
+    updatedLasers = game[:lasers]
+                  |> Enum.reduce([], fn laser, acc->
+                                            cond do
+                                                laser[:id] != id -> [laser |acc]
+                                                true ->acc
+                                            end
+                                          end)
         game = game
               |> Map.put(:players, updatedPlayers)
+              |> Map.put(:lasers, updatedLasers)
         {game, false}
     cond do
       length(players) == 1 -> {game, true}

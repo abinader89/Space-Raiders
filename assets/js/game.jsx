@@ -54,7 +54,7 @@ class Game extends React.Component {
   }
 
   enableKeys() {
-    window.keysEnabled = true;
+    window.keysEnabled = true
     document.addEventListener("keydown", (event) => this.onKeyDown(event))
   }
 
@@ -62,13 +62,13 @@ class Game extends React.Component {
       window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
       window.onunload = () => window.channel.push("disconnect", {id: window.id})
       window.channel.on('new_tick', msg => {
+        const { players } = msg
+        players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
         this.setState(msg)
-        if(!window.keysEnabled){
+        if(window.id != undefined && !window.keysEnabled){
           this.enableKeys()
         }
-      const { players } = msg
-      players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
-    })
+   })
   }
 
 
