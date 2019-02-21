@@ -76,6 +76,7 @@ defmodule SpaceRaiders.Game do
       |> Map.put(:right_shift, true)
       |> Map.put(:counter, 1)
       |> Map.put(:alien_lasers, [])
+      |> Map.put(:over, false)
   end
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
@@ -152,14 +153,14 @@ defmodule SpaceRaiders.Game do
     {updated_aliens, updated_lasers} = check_for_collision(updated_aliens, updated_lasers, 15, 15)
     {updated_players, updated_alien_lasers} = check_for_collision(players, updated_alien_lasers, 15, 15)
     {updated_barriers, updated_alien_lasers} = check_for_collision(barriers, updated_alien_lasers, 60, 10)
-    state = %{}
-    Map.put(state, :players, updated_players)
+    state = Map.put(state, :players, updated_players)
       |> Map.put(:lasers, updated_lasers)
       |> Map.put(:alien_lasers, updated_alien_lasers)
       |> Map.put(:aliens, updated_aliens)
       |> Map.put(:barriers, updated_barriers)
       |> Map.put(:right_shift, updated_right_shift)
       |> Map.put(:counter, new_counter)
+    Map.put(state, :over, is_game_over(state))
     end
 
   # delegate to update_lasers with the lasers map in the state
@@ -175,6 +176,16 @@ defmodule SpaceRaiders.Game do
         laser
     end
     end
+  end
+
+  def is_game_over(state) do
+      %{players: players, aliens: aliens} = state
+      cond do
+        length(players) == 0 -> true
+        length(aliens) == 0 -> true
+        List.last(aliens)[:posn].y >= hd(players)[:posn].y -> true
+        true -> false
+      end
   end
 
   def check_for_laser_collision(lasers, aliens, hitWidth, hitLength) do

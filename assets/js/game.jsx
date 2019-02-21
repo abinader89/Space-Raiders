@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
-import { Stage, Layer, Image, Container, Rect, Line } from 'react-konva';
+import { Stage, Layer, Image, Container, Rect, Line, Text } from 'react-konva';
 import useImage from 'use-image';
 import spaceShipImg from '../static/images/spaceship.svg';
 import alienImage from '../static/images/enemy1.svg';
@@ -44,7 +44,8 @@ class Game extends React.Component {
       barriers: [],
       lasers: [],
       players: [],
-      alien_lasers: []
+      alien_lasers: [],
+      over: false
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
@@ -122,6 +123,14 @@ class Game extends React.Component {
     return out;
   }
 
+  renderEndText(){
+    const {aliens} = this.state
+    if(aliens.length == 0) {
+      return(<Text {...{fontsize: 20, text: "You Won!", x: 450, y: 500, width: 200}}/>)
+    }
+    return(<Text {...{fontsize: 20, text: "You Lost", x: 450, y: 500}}/>)
+    }
+
   renderPlayers(players) {
     const out = [];
     players.forEach((player) => {
@@ -130,21 +139,21 @@ class Game extends React.Component {
   }
 
   render() {
-    const { players, aliens, barriers, lasers, alien_lasers} = this.state;
+    const { players, aliens, barriers, lasers, alien_lasers, over} = this.state;
     const alienComponents = this.renderAliens(aliens);
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     const laserComponents = this.renderPlayerLasers(lasers);
-    console.log(aliens.map(alien => alien.posn))
     const alienLaserComponents = this.renderAlienLasers(alien_lasers);
     return <div tabIndex="0">
       <Stage width={900} height={1000}>
         <Layer>
-          {playerComponents}
-          {alienComponents}
-          {barrierComponents}
-          {laserComponents}
-          {alienLaserComponents}
+          {!over && playerComponents}
+          {!over && alienComponents}
+          {!over && barrierComponents}
+          {!over && laserComponents}
+          {!over && alienLaserComponents}
+          {over && this.renderEndText()}
         </Layer>
       </Stage>
     </div>

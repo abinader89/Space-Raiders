@@ -90,12 +90,14 @@ defmodule SpaceRaiders.Timer do
 
   def handle_info("tick:"<> name, state) do
    game = cond do
-      state[:game] != nil -> game = SpaceRaiders.Game.on_tick(state[:game])
+      state[:game] != nil -> SpaceRaiders.Game.on_tick(state[:game])
       true -> SpaceRaiders.Game.on_tick(state)
     end
     broadcast(game, name)
     BackupAgent.put(name, game)
-    schedule_update(100, name)
+    if(!game[:over]) do
+      schedule_update(100, name)
+    end
     {:noreply, game}
   end
 
