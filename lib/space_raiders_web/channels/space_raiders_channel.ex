@@ -28,6 +28,10 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
     {:reply, {:ok, %{"game" => game}}, socket}
   end
 
+  def terminate(reason, arg1) do
+    reason |> IO.inspect
+  end
+
 
   def handle_in("new_tick", msg, socket) do
     push(socket, "new_tick", msg)
