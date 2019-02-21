@@ -50,8 +50,8 @@ class Game extends React.Component {
 
   componentDidMount(){
     if(window.location.href.includes("/game/")) {
-    window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
-    window.channel.on('new_tick', msg => {
+      window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
+      window.channel.on('new_tick', msg => {
       this.setState(msg)
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
@@ -68,7 +68,7 @@ class Game extends React.Component {
     if(lasers[0]) console.log(lasers[0].posn.x, lasers[0].posn.y)
     lasers.forEach((laser) => {
       if(laser.inplay) {
-        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 4, points, stroke: "black"}}/>)
+        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 3, points, stroke: "black"}}/>)
       }
     })
     return out;
@@ -78,7 +78,7 @@ class Game extends React.Component {
     const out = [];
     const points = [0,0, 0,20]
     lasers.forEach((laser) => {
-       out.push(<Line {...{x: (laser.x * 1.5), y: laser.y * 4, points, stroke: "red"}}/>)
+       out.push(<Line {...{x: (laser.x * 1.5), y: laser.y * 3, points, stroke: "red"}}/>)
     })
     return out;
   }
@@ -97,7 +97,7 @@ class Game extends React.Component {
   renderAliens(aliens){
     const out = [];
     aliens.forEach((alien) => {
-      out.push(<AlienImage {...{x: (alien.posn.x *1.5), y: alien.posn.y * 4}}/>);
+      out.push(<AlienImage {...{x: (alien.posn.x *1.5), y: alien.posn.y * 3}}/>);
     })
     return out;
   }

@@ -28,19 +28,19 @@ defmodule SpaceRaiders.Game do
     Enum.map aliens, fn %{id: no} = identifier ->
     cond do
     no < 5 ->
-      Map.put(identifier, :posn, %{x: 10 * (1 + no), y: 15})
+      Map.put(identifier, :posn, %{x: 24 * (1 + no), y: 25})
       |> Map.put(:health, 2)
     no < 10 ->
-      Map.put(identifier, :posn, %{x: 10 * (1 + (rem(no, 5))), y: 25}) 
+      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 50}) 
       |> Map.put(:health, 2)
     no < 15 ->
-      Map.put(identifier, :posn, %{x: 10 * (1 + (rem(no, 5))), y: 35})
+      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 75})
       |> Map.put(:health, 2)
     no < 20 ->
-      Map.put(identifier, :posn, %{x: 10 * (1 + (rem(no, 5))), y: 45})
+      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 100})
       |> Map.put(:health, 2)
     no < 25 ->
-      Map.put(identifier, :posn, %{x: 10 * (1 + (rem(no, 5))), y: 55})
+      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 125})
       |> Map.put(:health, 2)
     end
     end
@@ -182,10 +182,11 @@ defmodule SpaceRaiders.Game do
                             alive = Enum.reduce(lasers,
                                         true,
                                         fn laser,
-                                           hascollided -> %{posn: %{x: lx, y: ly}} = laser
+                                           hascollided -> %{posn: %{x: lx, y: ly}, inplay: inplay} = laser
                                                           cond do
+                                                           inplay === false -> hascollided
                                                            hascollided != true -> hascollided
-                                                           abs(lx - ax) < 10 && abs(ly - ay) < 10 -> false
+                                                           abs(lx - ax) < 7.5 && abs(ly - ay) < 7.5 -> false
                                                            true -> true
                                                            end end)
                               alive
@@ -198,7 +199,7 @@ defmodule SpaceRaiders.Game do
                                                   %{posn: %{x: ax, y: ay}} = alien
                                                   cond do
                                                     isStillAlive != false -> isStillAlive
-                                                    abs(lx - ax) < 10 && abs(ly - ay) < 10 ->true
+                                                    abs(lx - ax) < 7.5 && abs(ly - ay) < 7.5 ->true
                                                     true -> isStillAlive
                                                   end end)
                           cond do
