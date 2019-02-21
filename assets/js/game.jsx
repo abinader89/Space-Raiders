@@ -48,17 +48,18 @@ class Game extends React.Component {
       over: false
     };
     window.channel = channel
+    this.onKeyDown = this.onKeyDown.bind(this)
     //channel.on("ok", (game)=>this.setState(game))
-    document.addEventListener("keydown", (event) => this.onKeyDown(event))
   }
 
   enableKeys() {
     window.keysEnabled = true;
-    this.onKeyDown = this.onKeyDown.bind(this)
+    document.addEventListener("keydown", (event) => this.onKeyDown(event))
   }
 
   componentDidMount(){
       window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
+      window.onunload = () => window.channel.push("disconnect", {id: window.id})
       window.channel.on('new_tick', msg => {
         this.setState(msg)
         if(!window.keysEnabled){
