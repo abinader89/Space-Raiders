@@ -15,6 +15,8 @@ const SpaceshipImage = (props) => {
   const [image] = useImage(spaceShipImg);
   return <Image {...{
     ...props,
+    offsetX: 20,
+    offsetY: 25,
     image: image,
     height: 50,
     width: 40,
@@ -25,6 +27,8 @@ const AlienImage = (props) => {
   const [image] = useImage(alienImage)
   return <Image {...{
     ...props,
+    offsetX: 20,
+    offsetY: 25,
     image: image,
     height: 50,
     width: 40,
@@ -119,7 +123,7 @@ class Game extends React.Component {
   renderPlayers(players) {
     const out = [];
     players.forEach((player) => {
-      out.push(<SpaceshipImage {...{x: (player.posn.x*1.5) - 20, y: player.posn.y * 3}}/>)});
+      out.push(<SpaceshipImage {...{x: (player.posn.x*1.5), y: player.posn.y * 3}}/>)});
     return out
   }
 
