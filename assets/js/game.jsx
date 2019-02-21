@@ -50,6 +50,7 @@ class Game extends React.Component {
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
     //channel.on("ok", (game)=>this.setState(game))
+    window.keysEnabled = false
   }
 
   enableKeys() {
@@ -63,7 +64,7 @@ class Game extends React.Component {
       window.channel.on('new_tick', msg => {
         this.setState(msg)
         if(!window.keysEnabled){
-          this.enableKeys
+          this.enableKeys()
         }
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
@@ -151,7 +152,7 @@ class Game extends React.Component {
     const laserComponents = this.renderPlayerLasers(lasers);
     const alienLaserComponents = this.renderAlienLasers(alien_lasers);
     return <div tabIndex="0">
-      <Stage width={900} height={1000}>
+      <Stage width={900} height={900}>
         <Layer>
           {!over && playerComponents}
           {!over && alienComponents}
