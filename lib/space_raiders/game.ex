@@ -2,7 +2,7 @@ defmodule SpaceRaiders.Game do
 
   def get_player(name, id) do
     player = %{id: id, name: name}
-    Map.put(player, :posn, %{x: 200 * (1 + id), y: 250})
+    Map.put(player, :posn, %{x: 200 * (1 + rem(id , 2)), y: 250})
       |> Map.put(:lives, 3)
       |> Map.put(:powerups, 0)
   end
