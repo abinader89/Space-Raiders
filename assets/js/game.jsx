@@ -102,6 +102,8 @@ class Game extends React.Component {
           window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
           window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
+    } else if (e.key == "r") {
+          window.channel.push("restart")
     }
   }
 

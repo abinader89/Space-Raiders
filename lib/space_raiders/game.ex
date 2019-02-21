@@ -80,20 +80,30 @@ defmodule SpaceRaiders.Game do
   end
 
   def new(user) do
-    state = %{}
     players = [get_player(user, 0)]
     lasers = [get_laser(0)]
-    aliens = get_aliens()
-    barriers = get_barriers()
-
-    Map.put(state, :players, players)
+    Map.put(get_new_game_state(), :players, players)
       |> Map.put(:lasers, lasers)
-      |> Map.put(:aliens, aliens)
-      |> Map.put(:barriers, barriers)
-      |> Map.put(:right_shift, true)
-      |> Map.put(:counter, 1)
-      |> Map.put(:alien_lasers, [])
-      |> Map.put(:over, false)
+  end
+
+  def restart(state) do
+    newLasers = Enum.map(state[:lasers], fn laser ->
+                                            Map.merge(laser, %{posn: %{x: 0, y: 0}}) end)
+    get_new_game_state()
+      |> Map.put(:players, state[:players])
+      |> Map.put(:lasers, newLasers)
+
+  end
+
+  def get_new_game_state() do
+    %{
+      aliens: get_aliens(),
+      barriers: get_barriers(),
+      alien_lasers: [],
+      over: false,
+      counter: 1,
+      right_shift: true,
+    }
   end
 
   # move: This function is the mapping to the left/right keys for the user to move his craft
