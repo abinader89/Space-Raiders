@@ -30,8 +30,8 @@ const AlienImage = (props) => {
     offsetX: 20,
     offsetY: 25,
     image: image,
-    height: 50,
-    width: 40,
+    height: 60,
+    width: 45,
     rotation: 180}}/>
 }
 
@@ -111,10 +111,12 @@ class Game extends React.Component {
     const out = [];
     barriers.forEach((barrier) => {
       out.push(<Rect {...{
+        offsetX: 45,
+        offsetY: 15,
         y: barrier.posn.y * 3,
-        x: (barrier.posn.x * 7) - 30,
-        height: 20,
-        width: 60,
+        x: (barrier.posn.x * 1.5) ,
+        height: 30,
+        width: 90,
         fill: 'black'}}/>)
     })
     return out;

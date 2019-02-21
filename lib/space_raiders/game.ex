@@ -28,19 +28,19 @@ defmodule SpaceRaiders.Game do
     Enum.map aliens, fn %{id: no} = identifier ->
     cond do
     no < 5 ->
-      Map.put(identifier, :posn, %{x: 24 * (1 + no), y: 25})
+      Map.put(identifier, :posn, %{x: 25 * (1 + no), y: 25})
       |> Map.put(:health, 2)
     no < 10 ->
-      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 50}) 
+      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 50})
       |> Map.put(:health, 2)
     no < 15 ->
-      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 75})
+      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 75})
       |> Map.put(:health, 2)
     no < 20 ->
-      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 100})
+      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 100})
       |> Map.put(:health, 2)
     no < 25 ->
-      Map.put(identifier, :posn, %{x: 24 * (1 + (rem(no, 5))), y: 125})
+      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 125})
       |> Map.put(:health, 2)
     end
     end
@@ -49,7 +49,7 @@ defmodule SpaceRaiders.Game do
   def get_barriers do
     barriers = Enum.map(0..2, &(%{id: &1}))
     Enum.map barriers, fn %{id: no} = identifier ->
-    Map.put(identifier, :posn, %{x: 33 * (1 + no), y: 220})
+    Map.put(identifier, :posn, %{x: 150 * (1 + no), y: 220})
     |> Map.put(:health, 10)
     end
   end
@@ -149,13 +149,15 @@ defmodule SpaceRaiders.Game do
     updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter) |> update_alien_lasers
     updated_aliens = update_aliens(aliens, new_counter, right_shift)
     updated_right_shift = update_shift(right_shift, new_counter)
-    {updated_aliens, updated_lasers} = check_for_collision(updated_aliens, updated_lasers)
+    {updated_aliens, updated_lasers} = check_for_collision(updated_aliens, updated_lasers, 15, 15)
+    {updated_players, updated_alien_lasers} = check_for_collision(players, updated_alien_lasers, 15, 15)
+    {updated_barriers, updated_alien_lasers} = check_for_collision(barriers, updated_alien_lasers, 60, 10)
     state = %{}
-    Map.put(state, :players, players)
+    Map.put(state, :players, updated_players)
       |> Map.put(:lasers, updated_lasers)
       |> Map.put(:alien_lasers, updated_alien_lasers)
       |> Map.put(:aliens, updated_aliens)
-      |> Map.put(:barriers, barriers)
+      |> Map.put(:barriers, updated_barriers)
       |> Map.put(:right_shift, updated_right_shift)
       |> Map.put(:counter, new_counter)
     end
@@ -175,39 +177,53 @@ defmodule SpaceRaiders.Game do
     end
   end
 
-  def check_for_collision(aliens, lasers) do
+  def check_for_laser_collision(lasers, aliens, hitWidth, hitLength) do
+     lasers
+          |> Enum.map(fn laser ->
+                         %{x: lx, y: ly} =
+                                cond do
+                                  laser[:posn] != nil -> laser[:posn]
+                                  true -> laser
+                                end
+                                didhit = Enum.reduce(aliens, false, fn
+                                                                    alien, isStillAlive ->
+                                                                    %{posn: %{x: ax, y: ay}} = alien
+                                                                    cond do
+                                                                      isStillAlive != false -> isStillAlive
+                                                                      abs(lx - ax) < hitWidth && abs(ly - ay) < hitLength ->true
+                                                                      true -> isStillAlive
+                                                                     end
+                                 end)
+                          cond do
+                            didhit -> Map.merge(laser, %{inplay: false})
+                            true -> laser
+                          end
+             end)
+
+  end
+
+  def check_for_collision(aliens, lasers, hitWidth, hitLength) do
     updated_aliens = aliens
           |> Enum.filter(fn alien ->
                             %{posn: %{x: ax, y: ay}} = alien
                             alive = Enum.reduce(lasers,
                                         true,
                                         fn laser,
-                                           hascollided -> %{posn: %{x: lx, y: ly}, inplay: inplay} = laser
+                                           hascollided -> {%{x: lx, y: ly}, inplay} =
+                                                          cond do
+                                                            laser[:posn] != nil -> {laser[:posn], laser[:inplay]}
+                                                            true -> {laser, true}
+                                                          end
                                                           cond do
                                                            inplay === false -> hascollided
                                                            hascollided != true -> hascollided
-                                                           abs(lx - ax) < 7.5 && abs(ly - ay) < 7.5 -> false
+                                                           abs(lx - ax) < hitWidth && abs(ly - ay) < hitLength -> false
                                                            true -> true
                                                            end end)
                               alive
                         end)
-  lasers = lasers
-          |> Enum.map(fn laser ->
-                        %{posn: %{x: lx, y: ly}} = laser
-                        didhit = Enum.reduce(aliens, false, fn
-                                                  alien, isStillAlive ->
-                                                  %{posn: %{x: ax, y: ay}} = alien
-                                                  cond do
-                                                    isStillAlive != false -> isStillAlive
-                                                    abs(lx - ax) < 7.5 && abs(ly - ay) < 7.5 ->true
-                                                    true -> isStillAlive
-                                                  end end)
-                          cond do
-                            didhit -> Map.merge(laser, %{inplay: false})
-                            true -> laser
-                            end
-                          end)
-    {updated_aliens, lasers}
+      lasers = check_for_laser_collision(lasers, aliens, hitWidth, hitLength)
+     {updated_aliens, lasers}
   end
 
   # delegate to update_alien_lasers with the aliens_lasers map in the state
@@ -260,7 +276,7 @@ defmodule SpaceRaiders.Game do
   end
 
   # delegate to update_shift with the right_shift map in the state
-  def update_shift(shift, counter) do 
+  def update_shift(shift, counter) do
     if counter == 0 do
       not shift
     else
@@ -272,7 +288,7 @@ defmodule SpaceRaiders.Game do
   def disconnect(game, id) do
     %{players: players} = game
     updatedPlayers = players
-                       |> Enum.reduce([], fn player, acc -> 
+                       |> Enum.reduce([], fn player, acc ->
                                             cond do
                                               (player[:id] != id) -> [player | acc]
                                                true -> acc
