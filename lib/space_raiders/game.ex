@@ -301,12 +301,12 @@ defmodule SpaceRaiders.Game do
   end
 
 
-  def disconnect(game, name) do
-    %{players: players} = game
+  def disconnect(game, id) do
+    players = game[:players]
     updatedPlayers = players
                        |> Enum.reduce([], fn player, acc ->
                                             cond do
-                                              (player[:name] != name) -> [player | acc]
+                                              (player[:id] != id) -> [player | acc]
                                                true -> acc
                                              end
                                            end)

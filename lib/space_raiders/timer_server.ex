@@ -36,8 +36,8 @@ defmodule SpaceRaiders.Timer do
     end
   end
 
-  def disconnect(name, playername) do
-    GenServer.call(reg(name), {:disconnect, name, playername})
+  def disconnect(name, id) do
+    GenServer.call(reg(name), {:disconnect, name, id})
   end
 
   def move(name, direction, id) do
@@ -52,8 +52,8 @@ defmodule SpaceRaiders.Timer do
     GenServer.call(reg(name), {:join, name, user})
   end
 
-  def handle_call({:disconnect, name, playername}, _from, game) do
-    {game, iAmDead} = SpaceRaiders.Game.disconnect(game, playername) 
+  def handle_call({:disconnect, name, id}, _from, game) do
+    {game, iAmDead} = SpaceRaiders.Game.disconnect(game, id) 
     BackupAgent.put(name, game)
     if(iAmDead) do
       {:stop, :normal, game}
