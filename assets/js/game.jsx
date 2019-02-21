@@ -49,13 +49,15 @@ class Game extends React.Component {
   }
 
   componentDidMount(){
+    if(window.location.href.includes("/game/")) {
     window.channel.join("space_raiders").receive("ok", () => {}).receive("error", resp => console.log(resp))
     window.channel.on('new_tick', msg => {
       this.setState(msg)
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
-    window.onunload = () => window.channel.push("disconnect", {id: window.id})
+      window.onunload = () => window.channel.push("disconnect", {id: window.id})
+    }
   }
 
 
@@ -63,9 +65,10 @@ class Game extends React.Component {
   renderPlayerLasers(lasers) {
     const out = [];
     const points = [0, 0, 0, -20]
+    if(lasers[0]) console.log(lasers[0].posn.x, lasers[0].posn.y)
     lasers.forEach((laser) => {
       if(laser.inplay) {
-        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 3, points, stroke: "black"}}/>)
+        out.push(<Line {...{x: (laser.posn.x * 1.5), y: laser.posn.y * 4, points, stroke: "black"}}/>)
       }
     })
     return out;
@@ -75,7 +78,7 @@ class Game extends React.Component {
     const out = [];
     const points = [0,0, 0,20]
     lasers.forEach((laser) => {
-       out.push(<Line {...{x: (laser.x * 1.5), y: laser.y * 3, points, stroke: "red"}}/>)
+       out.push(<Line {...{x: (laser.x * 1.5), y: laser.y * 4, points, stroke: "red"}}/>)
     })
     return out;
   }
@@ -126,7 +129,7 @@ class Game extends React.Component {
     const playerComponents = this.renderPlayers(players);
     const barrierComponents = this.renderBarriers(barriers);
     const laserComponents = this.renderPlayerLasers(lasers);
-    console.log(alien_lasers)
+    console.log(aliens.map(alien => alien.posn))
     const alienLaserComponents = this.renderAlienLasers(alien_lasers);
     return <div tabIndex="0">
       <Stage width={900} height={1000}>

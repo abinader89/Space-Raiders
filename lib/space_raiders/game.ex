@@ -84,7 +84,7 @@ defmodule SpaceRaiders.Game do
   # dir: atom :left or :right specifying the direction that the player should move
 
   # Logic for a new state
-  def move(state, playerID, dir) do  
+  def move(state, playerID, dir) do
     delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
     new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
 
@@ -144,11 +144,12 @@ defmodule SpaceRaiders.Game do
     new_counter = rem(state[:counter] + 1, 100)
     right_shift = state[:right_shift]
 
+
     updated_lasers = update_lasers(lasers)
     updated_alien_lasers = update_alien_lasers(alien_lasers, aliens, new_counter) |> update_alien_lasers
     updated_aliens = update_aliens(aliens, new_counter, right_shift)
     updated_right_shift = update_shift(right_shift, new_counter)
-
+    {updated_aliens, updated_lasers} = check_for_collision(updated_aliens, updated_lasers)
     state = %{}
     Map.put(state, :players, players)
       |> Map.put(:lasers, updated_lasers)
@@ -172,6 +173,40 @@ defmodule SpaceRaiders.Game do
         laser
     end
     end
+  end
+
+  def check_for_collision(aliens, lasers) do
+    updated_aliens = aliens
+          |> Enum.filter(fn alien ->
+                            %{posn: %{x: ax, y: ay}} = alien
+                            alive = Enum.reduce(lasers,
+                                        true,
+                                        fn laser,
+                                           hascollided -> %{posn: %{x: lx, y: ly}} = laser
+                                                          cond do
+                                                           hascollided != true -> hascollided
+                                                           abs(lx - ax) < 10 && abs(ly - ay) < 10 -> false
+                                                           true -> true
+                                                           end end)
+                              alive
+                        end)
+  lasers = lasers
+          |> Enum.map(fn laser ->
+                        %{posn: %{x: lx, y: ly}} = laser
+                        didhit = Enum.reduce(aliens, false, fn
+                                                  alien, isStillAlive ->
+                                                  %{posn: %{x: ax, y: ay}} = alien
+                                                  cond do
+                                                    isStillAlive != false -> isStillAlive
+                                                    abs(lx - ax) < 10 && abs(ly - ay) < 10 ->true
+                                                    true -> isStillAlive
+                                                  end end)
+                          cond do
+                            didhit -> Map.merge(laser, %{inplay: false})
+                            true -> laser
+                            end
+                          end)
+    {updated_aliens, lasers}
   end
 
   # delegate to update_alien_lasers with the aliens_lasers map in the state
