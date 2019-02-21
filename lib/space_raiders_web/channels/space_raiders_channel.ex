@@ -7,6 +7,7 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
     if authorized?(payload) do
       %{"user" => user} = payload
         SpaceRaiders.Timer.start(name, user)
+        socket = assign(socket, :user, user)
         socket = assign(socket, :name, name)
       {:ok, %{"join" => name}, socket}
     else
@@ -23,13 +24,9 @@ defmodule SpaceRaidersWeb.SpaceRaidersChannel do
       game = SpaceRaiders.Timer.fire(socket.assigns[:name], id)
       {:reply, {:ok, %{"game" => game}}, socket}
   end
-  def handle_in("disconnect", %{"id" => id}, socket) do
-   game = SpaceRaiders.Timer.disconnect(socket.assigns[:name], id)
-    {:reply, {:ok, %{"game" => game}}, socket}
-  end
 
-  def terminate(reason, arg1) do
-    reason |> IO.inspect
+  def terminate(reason, socket) do
+    game = SpaceRaiders.Timer.disconnect(socket.assigns[:name], socket.assigns[:user])
   end
 
 

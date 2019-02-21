@@ -61,7 +61,6 @@ class Game extends React.Component {
       const { players } = msg
       players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
     })
-      window.onunload = () => window.channel.push("disconnect", {id: window.id})
     }
   }
 

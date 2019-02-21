@@ -62,6 +62,11 @@ defmodule SpaceRaiders.Game do
     end
   end
 
+  def get_player_by_id(players, playerId) do
+    Enum.filter(players, fn player -> player[:id] == playerId end)
+                        |> hd
+  end
+
   def new(user) do
     state = %{}
     players = [get_player(user, 0)]
@@ -86,8 +91,9 @@ defmodule SpaceRaiders.Game do
 
   # Logic for a new state
   def move(state, playerID, dir) do
-    delta = move_help(state, playerID, dir) + Enum.at(state[:players], playerID).posn.x
-    new_posn = Map.put(Enum.at(state[:players], playerID).posn, :x, delta)
+    existingPlayerState = get_player_by_id(state[:players], playerID)
+    delta = move_help(existingPlayerState, playerID, dir) + existingPlayerState.posn.x
+    new_posn = Map.put(existingPlayerState.posn, :x, delta)
 
     players = state[:players]
     updated_players = Enum.map players, fn %{id: num} = identifier ->
@@ -101,9 +107,8 @@ defmodule SpaceRaiders.Game do
   end
 
   # Logic for calculating delta
-  def move_help(state, playerID, dir) do
-    players = state[:players]
-    x = Enum.at(players, playerID).posn.x
+  def move_help(existingPlayerState, playerID, dir) do
+    x = existingPlayerState.posn.x
     cond do
     dir == :left and x > 10 ->
       -5
@@ -116,9 +121,9 @@ defmodule SpaceRaiders.Game do
 
   # logic for the players firing
   def fire(state, playerID) do
-  laser = Enum.at(state[:lasers], playerID)
+  laser = get_player_by_id(state[:lasers], playerID)
   if not laser.inplay do
-      player_x = Enum.at(state[:players], playerID)[:posn].x
+      player_x = get_player_by_id(state[:players], playerID)[:posn].x
       new_posn = %{x: player_x, y: 250}
       lasers = state[:lasers]
       fired_lasers = Enum.map lasers, fn %{id: num} = identifier ->
@@ -296,12 +301,12 @@ defmodule SpaceRaiders.Game do
   end
 
 
-  def disconnect(game, id) do
+  def disconnect(game, name) do
     %{players: players} = game
     updatedPlayers = players
                        |> Enum.reduce([], fn player, acc ->
                                             cond do
-                                              (player[:id] != id) -> [player | acc]
+                                              (player[:name] != name) -> [player | acc]
                                                true -> acc
                                              end
                                            end)
