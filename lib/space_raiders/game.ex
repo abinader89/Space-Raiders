@@ -42,23 +42,7 @@ defmodule SpaceRaiders.Game do
   def get_aliens do
     aliens = Enum.map(0..24, &(%{id: &1}))
     Enum.map aliens, fn %{id: no} = identifier ->
-    cond do
-    no < 5 ->
-      Map.put(identifier, :posn, %{x: 25 * (1 + no), y: 25})
-      |> Map.put(:health, 2)
-    no < 10 ->
-      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 50})
-      |> Map.put(:health, 2)
-    no < 15 ->
-      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 75})
-      |> Map.put(:health, 2)
-    no < 20 ->
-      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 100})
-      |> Map.put(:health, 2)
-    no < 25 ->
-      Map.put(identifier, :posn, %{x: 25 * (1 + (rem(no, 5))), y: 125})
-      |> Map.put(:health, 2)
-    end
+      Map.put(identifier, :posn, %{x: 25 * (1 + rem(no, 5)), y: 25 * (1 + div(no, 5))})
     end
   end
 
