@@ -165,7 +165,7 @@ class Game extends React.Component {
     const laserComponents = this.renderPlayerLasers(lasers);
     const alienLaserComponents = this.renderAlienLasers(alien_lasers);
     return <div tabIndex="0">
-      <Stage width={925} height={900}>
+      <Stage width={925} height={800}>
         <Layer>
           {!over && playerComponents}
           {!over && alienComponents}

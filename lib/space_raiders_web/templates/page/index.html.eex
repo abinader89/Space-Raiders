@@ -1,10 +1,18 @@
 <div class="row">
-  <div clas="column">
-    <%= form_for @conn, "/join", [as: :join], fn f -> %>
-    <h1>Join A Game</h1>
-    <label>Room: <%= text_input f, :game %></label>
-    <label>User Name: <%= text_input f, :user %></label>
-    <p><%= submit "Join" %></p>
-    <% end %>
+  <div>
+    <div clas="column column-50">
+      <%= form_for @conn, "/join", [as: :join], fn f -> %>
+      <h1>Join A Game</h1>
+      <label>Room: <%= text_input f, :game %></label>
+      <label>User Name: <%= text_input f, :user %></label>
+      <p><%= submit "Join" %></p>
+      <% end %>
+    </div>
+  </div>
+  <div class="column column-offset-25">
+    <h1>How To Play</h1>
+    <p>moving: move left and right with the arrow keys (left and right), or a & d</p>
+    <p>shooting: press e to shoot</p>
+    <p>restarting: press r at any time to restart</p>
   </div>
 </div>

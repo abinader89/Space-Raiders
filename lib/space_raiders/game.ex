@@ -285,7 +285,7 @@ defmodule SpaceRaiders.Game do
 
     def update_alien_lasers(_empty) do
     []
-    e2
+    end
 
   # delegate to update_aliens with the aliens map in the state
   def update_aliens(aliens, counter, _right_shift) when counter == 0 do
