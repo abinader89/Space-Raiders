@@ -14,5 +14,12 @@
     <p>moving: move left and right with the arrow keys (left and right), or a & d</p>
     <p>shooting: press e to shoot</p>
     <p>restarting: press r at any time to restart</p>
+    <label>Liscenses:
+      <p> All artwork liscened from
+        <a href="https://goodstuffnononsense.com/" rel="noopener noreferrer" target="_blank">Good Stuff No Nonsense</a>
+        under the
+         <a href="https://creativecommons.org/licenses/by/3.0/" rel="noopener noreferrer" target="_blank">Creative Commons 3.0</a>
+         Liscense
+      </p>
   </div>
 </div>
