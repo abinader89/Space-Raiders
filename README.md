@@ -1,10 +1,5 @@
 # SpaceRaiders
 
-# Artwork Liscenses:
-
-All artwork liscensed from [Good Stuff No Nonsense](https://goodstuffnononsense.com/)
-under the [Creative Commons 3.0](https://creativecommons.org/licenses/by/3.0/) liscense
-
 To start your Phoenix server:
 
   * Install dependencies with `mix deps.get`
@@ -15,6 +10,11 @@ To start your Phoenix server:
 Now you can visit [`localhost:4000`](http://localhost:4000) from your browser.
 
 Ready to run in production? Please [check our deployment guides](https://hexdocs.pm/phoenix/deployment.html).
+
+# Artwork Liscenses:
+
+All artwork liscensed from [Good Stuff No Nonsense](https://goodstuffnononsense.com/)
+under the [Creative Commons 3.0](https://creativecommons.org/licenses/by/3.0/) liscense
 
 ## Learn more
 
