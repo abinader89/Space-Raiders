@@ -229,7 +229,6 @@ defmodule SpaceRaiders.Game do
                             true -> [laser | newLasers]
                           end
              end)
-          |> IO.inspect
 
   end
 
@@ -252,7 +251,7 @@ defmodule SpaceRaiders.Game do
                                                            true -> true
                                                            end end)
                               cond do
-                                 !alive && alien[:dead] != nil -> [Map.merge(alien, %{dead: true}) | acc] |> IO.inspect
+                                 !alive && alien[:dead] != nil -> [Map.merge(alien, %{dead: true}) | acc]
                                  !alive -> acc
                                  true -> [alien | acc]
                               end
@@ -286,7 +285,7 @@ defmodule SpaceRaiders.Game do
 
     def update_alien_lasers(_empty) do
     []
-    end
+    e2
 
   # delegate to update_aliens with the aliens map in the state
   def update_aliens(aliens, counter, _right_shift) when counter == 0 do
