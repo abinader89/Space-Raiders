@@ -208,7 +208,7 @@ defmodule SpaceRaiders.Game do
 
   def check_for_laser_collision(lasers, aliens, hitWidth, hitLength) do
      lasers
-          |> Enum.map(fn laser ->
+          |> Enum.reduce([],fn laser, newLasers ->
                          %{x: lx, y: ly} =
                                 cond do
                                   laser[:posn] != nil -> laser[:posn]
@@ -224,10 +224,12 @@ defmodule SpaceRaiders.Game do
                                                                      end
                                  end)
                           cond do
-                            didhit -> Map.merge(laser, %{inplay: false})
-                            true -> laser
+                            didhit && laser[:inplay] != nil -> [Map.merge(laser, %{inplay: false}) | newLasers]
+                            didhit -> newLasers
+                            true -> [laser | newLasers]
                           end
              end)
+          |> IO.inspect
 
   end
 
