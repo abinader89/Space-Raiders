@@ -49,13 +49,13 @@ class Game extends React.Component {
     };
     window.channel = channel
     this.onKeyDown = this.onKeyDown.bind(this)
-    //channel.on("ok", (game)=>this.setState(game))
     window.keysEnabled = false
   }
 
   enableKeys() {
     window.keysEnabled = true
-    document.addEventListener("keydown", (event) => this.onKeyDown(event))
+    document.addEventListener("keydown", this.onKeyDown)
+    document.addEventListener("keydown", this.onRestart)
   }
 
   componentDidMount(){
@@ -63,9 +63,13 @@ class Game extends React.Component {
       window.onunload = () => window.channel.push("disconnect", {id: window.id})
       window.channel.on('new_tick', msg => {
         const { players } = msg
-        players.forEach((player) => { if(player.name == window.userName) { window.id =  player.id }})
+        let thisPlayer = players.find((player) => player.name == window.userName);
+        window.id = thisPlayer.id
         this.setState(msg)
-        if(window.id != undefined && !window.keysEnabled){
+        if(thisPlayer.dead){
+          window.keysEnabled = false
+          document.removeEventListener("keydown", this.onKeyDown)
+        } else if(window.id != undefined && !window.keysEnabled){
           this.enableKeys()
         }
    })
@@ -94,6 +98,12 @@ class Game extends React.Component {
     return out;
   }
 
+  onRestart(e) {
+   if (e.key == "r") {
+          window.channel.push("restart").receive("ok", (game) => {this.setState(game.game);})
+    }
+  }
+
   onKeyDown(e) {
     const { key } = e;
     if (key == "e"){
@@ -102,8 +112,6 @@ class Game extends React.Component {
           window.channel.push("move", {id: window.id, direction: "left"}).receive("ok", (game) => {this.setState(game.game);})
     } else if (e.key == "ArrowRight" || key == "d") {
           window.channel.push("move", {id: window.id, direction: "right"}).receive("ok", (game) => {this.setState(game.game)})
-    } else if (e.key == "r") {
-          window.channel.push("restart")
     }
   }
 
@@ -142,7 +150,10 @@ class Game extends React.Component {
   renderPlayers(players) {
     const out = [];
     players.forEach((player) => {
-      out.push(<SpaceshipImage {...{x: (player.posn.x*1.5), y: player.posn.y * 3}}/>)});
+      if(!player.dead) {
+        out.push(<SpaceshipImage {...{x: (player.posn.x*1.5), y: player.posn.y * 3}}/>);
+      }
+    })
     return out
   }
 

@@ -57,6 +57,9 @@ defmodule SpaceRaiders.Timer do
   end
 
   def handle_call({:restart, name}, _from, game) do
+    if(game[:over]) do
+      schedule_update(120, name)
+    end
     game = SpaceRaiders.Game.restart(game)
     BackupAgent.put(name, game)
     {:reply, game, game}
